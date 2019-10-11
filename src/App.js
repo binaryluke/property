@@ -1,18 +1,36 @@
 import React from 'react';
 import DeckGL from '@deck.gl/react';
-import {LineLayer} from '@deck.gl/layers';
+import {ScatterplotLayer} from '@deck.gl/layers';
 import {StaticMap} from 'react-map-gl';
 import dataset from './data/clayton.response.json';
 
 import './App.css';
 
-window.dataset = dataset;
-
 // Set your mapbox access token here
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiYmluYXJ5bHVrZSIsImEiOiJjazFqNWIyNTYxM3d2M2dzMGc5eHJmdDV6In0.GSRpcHwrbqB3IWKrwaDKUg';
 
-// Data to be used by the LineLayer
-const data = [{sourcePosition: [145.0603463, -37.903704], targetPosition: [145.1824093, -37.956786]}];
+const listings = dataset
+  .filter(item => item.type === 'PropertyListing')
+  .map(item => item.listing)
+  .map(listing => ({
+    id: listing.id,
+    price: listing.priceDetails.price,
+    coordinates: [
+      listing.propertyDetails.longitude,
+      listing.propertyDetails.latitude,
+    ],
+  }));
+
+const layer = {
+  id: 'listings',
+  data: listings,
+  stroked: false,
+  filled: true,
+  getPosition: d => d.coordinates,
+  getRadius: d => Math.sqrt(d.price)/8,
+  getFillColor: [255, 200, 0]
+};
+
 
 // Viewport settings
 const initialViewState = {
@@ -25,7 +43,7 @@ const initialViewState = {
 
 function App() {
   const layers = [
-    new LineLayer({id: 'line-layer', data})
+    new ScatterplotLayer(layer)
   ];
 
   return (
