@@ -2,34 +2,16 @@ import React from 'react';
 import DeckGL from '@deck.gl/react';
 import {GridCellLayer} from '@deck.gl/layers';
 import {StaticMap} from 'react-map-gl';
-import dataset from '../data/clayton.response.json';
-
-const PROPERTY_TYPE_HOUSE = 'House';
-const PROPERTY_TYPE_TOWNHOUSE = 'Townhouse';
-const PROPERTY_TYPE_AUF = 'ApartmentUnitFlat';
+import {
+  PROPERTY_TYPE_HOUSE,
+  PROPERTY_TYPE_TOWNHOUSE,
+  PROPERTY_TYPE_AUF
+} from '../util/constants';
 
 // Set your mapbox access token here
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiYmluYXJ5bHVrZSIsImEiOiJjazFqNWIyNTYxM3d2M2dzMGc5eHJmdDV6In0.GSRpcHwrbqB3IWKrwaDKUg';
 
-const listings = dataset
-  .filter(item => item.type === 'PropertyListing')
-  .map(item => item.listing)
-  .filter(listing => [
-    PROPERTY_TYPE_HOUSE,
-    PROPERTY_TYPE_TOWNHOUSE,
-    PROPERTY_TYPE_AUF
-  ].includes(listing.propertyDetails.propertyType))
-  .map(listing => ({
-    id: listing.id,
-    type: listing.propertyDetails.propertyType,
-    price: listing.priceDetails.price,
-    coordinates: [
-      listing.propertyDetails.longitude,
-      listing.propertyDetails.latitude,
-    ],
-  }));
-
-const layer = {
+const getLayer = (listings, changeSelectedListing) => ({
   id: 'grid-cell-layer',
   data: listings,
   pickable: true,
@@ -46,10 +28,9 @@ const layer = {
   getElevation: d => Math.sqrt(d.price),//d.value,
   onHover: ({object, x, y}) => {
     if (!object) return;
-    const tooltip = `price: ${object.price}`;
-    console.log(tooltip);
+    changeSelectedListing(object.id);
   }
-}
+});
 
 
 // Viewport settings
@@ -61,9 +42,9 @@ const initialViewState = {
   bearing: 0
 };
 
-function App() {
+function Map({listings, onChangeSelectedListing}) {
   const layers = [
-    new GridCellLayer(layer)
+    new GridCellLayer(getLayer(listings, onChangeSelectedListing))
   ];
 
   return (
@@ -71,7 +52,6 @@ function App() {
       initialViewState={initialViewState}
       controller={true}
       layers={layers}
-      
     >
       <StaticMap
         mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
@@ -81,4 +61,4 @@ function App() {
   );
 }
 
-export default App;
+export default Map;
