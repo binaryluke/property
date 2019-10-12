@@ -24,6 +24,9 @@ const listings = dataset
     price: listing.priceDetails.price,
     displayPrice: listing.priceDetails.displayPrice,
     url: `https://www.domain.com.au/${listing.listingSlug}`,
+    images: listing.media
+      .filter(m => m.category === 'Image')
+      .map(m => m.url),
     coordinates: [
       listing.propertyDetails.longitude,
       listing.propertyDetails.latitude,
@@ -44,7 +47,9 @@ function App() {
       <div className={styles.listing}>
         <Listing
           displayPrice={selectedListing.displayPrice}
-          url={selectedListing.url}/>
+          url={selectedListing.url}
+          images={selectedListing.images}
+        />
       </div>
       <div className={styles.status}>
         <span>Status</span>
