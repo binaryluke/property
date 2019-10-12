@@ -1,0 +1,47 @@
+.container {
+  display: grid;
+  box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
+  padding: 20px;
+  grid-gap: 10px;
+  grid-template-columns: 1fr 300px;
+  grid-template-rows: 1fr 1fr min-content min-content;
+  grid-template-areas:
+    "map listing"
+    "map listing"
+    "map legend"
+    "status legend"
+}
+
+.map,
+.listing,
+.status,
+.legend {
+  box-sizing: border-box;
+  border: 1px solid black;
+  background-color: #F3F5F8;
+}
+
+.map {
+  grid-area: map;
+  border: 3px solid black;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.listing {
+  grid-area: listing;
+}
+
+.status {
+  grid-area: status;
+  height: 80px;
+  padding: 2px;
+}
+
+.legend {
+  grid-area: legend;
+  height: 180px;
+}
