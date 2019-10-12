@@ -25,7 +25,7 @@ const getLayer = (listings, changeSelectedListing) => ({
     else if (d.type === PROPERTY_TYPE_AUF) return [51, 255, 167]; // #33ffa7
     return [0, 0, 0];
   },
-  getElevation: d => Math.sqrt(d.price),//d.value,
+  getElevation: d => Math.sqrt(d.price),
   onHover: ({object, x, y}) => {
     if (!object) return;
     changeSelectedListing(object.id);

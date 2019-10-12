@@ -22,6 +22,7 @@ const listings = dataset
     type: listing.propertyDetails.propertyType,
     price: listing.priceDetails.price,
     displayPrice: listing.priceDetails.displayPrice,
+    url: `https://www.domain.com.au/${listing.listingSlug}`,
     coordinates: [
       listing.propertyDetails.longitude,
       listing.propertyDetails.latitude,
@@ -29,17 +30,20 @@ const listings = dataset
   }));
 
 function App() {
-  const [displayPrice, setDisplayPrice] = useState('');
+  const [selectedListingId, setSelectedListingId] = useState();
+  const selectedListing = listings.find(l => l.id === selectedListingId) || {};
   return (
     <div className={styles.container}>
       <div className={styles.map}>
         <Map
           listings={listings}
-          onChangeSelectedListing={id => setDisplayPrice(listings.find(l => l.id === id).displayPrice)}
+          onChangeSelectedListing={setSelectedListingId}
         />
       </div>
       <div className={styles.listing}>
-        <Listing displayPrice={displayPrice} />
+        <Listing
+          displayPrice={selectedListing.displayPrice}
+          url={selectedListing.url}/>
       </div>
       <div className={styles.status}>
         <span>Status</span>
