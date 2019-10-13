@@ -29,7 +29,7 @@ function Legend() {
   return (
     <div className={styles.container}>
       {TYPES.map(type => (
-        <div className={styles.type}>
+        <div className={styles.type} key={type}>
           <div className={styles.color}>
             <div style={{ backgroundColor: COLOR_MAP[type] }} />
           </div>

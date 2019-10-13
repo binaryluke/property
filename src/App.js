@@ -47,12 +47,21 @@ function App() {
   const [isListingLimitExceeded, setIsListingLimitExceeded] = useState(false);
   const [selectedListingId, setSelectedListingId] = useState();
   const selectedListing = listings.find(l => l.id === selectedListingId);
+  const [lastSearchLongitude, setLastSearchLongitude] = useState(0);
+  const [lastSearchLatitude, setLastSearchLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
+  const [latitude, setLatitude] = useState(0);
+
   return (
     <div className={styles.container}>
       <div className={styles.map}>
         <Map
           listings={listings}
           onChangeSelectedListing={setSelectedListingId}
+          onMapMove={(longitude, latitude) => {
+            setLongitude(longitude);
+            setLatitude(latitude);
+          }}
         />
       </div>
       <div className={styles.listing}>
@@ -69,9 +78,12 @@ function App() {
         <Status
           numListings={listings.length}
           isListingLimitExceeded={isListingLimitExceeded}
+          isSearchDisabled={(longitude === lastSearchLongitude) && (latitude === lastSearchLatitude)}
           onClickSearch={() => {
             getListings()
               .then(({listings, isListingLimitExceeded}) => {
+                setLastSearchLongitude(longitude);
+                setLastSearchLatitude(latitude);
                 setListings(listings);
                 setIsListingLimitExceeded(isListingLimitExceeded);
               });

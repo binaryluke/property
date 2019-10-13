@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import DeckGL from '@deck.gl/react';
 import {GridCellLayer} from '@deck.gl/layers';
 import {StaticMap} from 'react-map-gl';
@@ -42,7 +42,12 @@ const initialViewState = {
   bearing: 0
 };
 
-function Map({listings, onChangeSelectedListing}) {
+function Map({listings, onChangeSelectedListing, onMapMove}) {
+  useEffect(() => {
+    // Let parent component know the initial latitude/longitude of the map
+    onMapMove(initialViewState.longitude, initialViewState.latitude);
+  }, []);
+
   const layers = [
     new GridCellLayer(getLayer(listings, onChangeSelectedListing))
   ];
@@ -52,6 +57,9 @@ function Map({listings, onChangeSelectedListing}) {
       initialViewState={initialViewState}
       controller={true}
       layers={layers}
+      onViewStateChange={({viewState}) => {
+        onMapMove(viewState.longitude, viewState.latitude);
+      }}
     >
       <StaticMap
         mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
@@ -60,5 +68,11 @@ function Map({listings, onChangeSelectedListing}) {
     </DeckGL>
   );
 }
+
+Map.defaultProps = {
+  listings: [],
+  onChangeSelectedListing: () => null,
+  onMapMove: () => null,
+};
 
 export default Map;
