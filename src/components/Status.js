@@ -1,16 +1,21 @@
 import React from 'react';
 import styles from './Status.module.css';
 
-function Status({numListings, onClickSearch}) {
+function Status({numListings, isListingLimitExceeded, onClickSearch}) {
+  const highlistClassName = isListingLimitExceeded
+    ? styles.numListingsExceeded
+    : '';
+
   return (
     <div className={styles.container}>
       <div className={styles.listings}>
         <span>Listings: </span>
-        <span>{numListings}</span>
+        <span className={highlistClassName}>{numListings}</span>
+        {isListingLimitExceeded && <span className={highlistClassName}>+</span>}
       </div>
-      <div className={styles.refine}>
-        <span>Refine your search area to see all properties</span>
-      </div>
+      {isListingLimitExceeded && <div className={styles.refine}>
+        <span className={highlistClassName}>Refine your search area to see all listings</span>
+      </div>}
       <div className={styles.search}>
         <button onClick={onClickSearch}>Search Map Area</button>
       </div>
@@ -20,6 +25,7 @@ function Status({numListings, onClickSearch}) {
 
 Status.defaultProps = {
   numListings: 0,
+  isListingLimitExceeded: false,
   onClickSearch: () => null,
 };
 

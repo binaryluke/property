@@ -11,31 +11,40 @@ import {
   PROPERTY_TYPE_AUF
 } from './util/constants';
 
-const getListings = () => Promise.resolve(dataset
-  .filter(item => item.type === 'PropertyListing')
-  .map(item => item.listing)
-  .filter(listing => [
-    PROPERTY_TYPE_HOUSE,
-    PROPERTY_TYPE_TOWNHOUSE,
-    PROPERTY_TYPE_AUF
-  ].includes(listing.propertyDetails.propertyType))
-  .map(listing => ({
-    id: listing.id,
-    type: listing.propertyDetails.propertyType,
-    price: listing.priceDetails.price,
-    displayPrice: listing.priceDetails.displayPrice,
-    url: `https://www.domain.com.au/${listing.listingSlug}`,
-    images: listing.media
-      .filter(m => m.category === 'Image')
-      .map(m => m.url),
-    coordinates: [
-      listing.propertyDetails.longitude,
-      listing.propertyDetails.latitude,
-    ],
-  })));
+const getListings = () => {
+  const isListingLimitExceeded = dataset.length >= 20;
+  const listings = dataset
+    .filter(item => item.type === 'PropertyListing')
+    .map(item => item.listing)
+    .filter(listing => [
+      PROPERTY_TYPE_HOUSE,
+      PROPERTY_TYPE_TOWNHOUSE,
+      PROPERTY_TYPE_AUF
+    ].includes(listing.propertyDetails.propertyType))
+    .map(listing => ({
+      id: listing.id,
+      type: listing.propertyDetails.propertyType,
+      price: listing.priceDetails.price,
+      displayPrice: listing.priceDetails.displayPrice,
+      url: `https://www.domain.com.au/${listing.listingSlug}`,
+      images: listing.media
+        .filter(m => m.category === 'Image')
+        .map(m => m.url),
+      coordinates: [
+        listing.propertyDetails.longitude,
+        listing.propertyDetails.latitude,
+      ],
+    }));
+
+  return Promise.resolve({
+    listings,
+    isListingLimitExceeded,
+  })
+};
 
 function App() {
   const [listings, setListings] = useState([]);
+  const [isListingLimitExceeded, setIsListingLimitExceeded] = useState(false);
   const [selectedListingId, setSelectedListingId] = useState();
   const selectedListing = listings.find(l => l.id === selectedListingId) || {};
   return (
@@ -56,7 +65,14 @@ function App() {
       <div className={styles.status}>
         <Status
           numListings={listings.length}
-          onClickSearch={() => getListings().then(setListings)}
+          isListingLimitExceeded={isListingLimitExceeded}
+          onClickSearch={() => {
+            getListings()
+              .then(({listings, isListingLimitExceeded}) => {
+                setListings(listings);
+                setIsListingLimitExceeded(isListingLimitExceeded);
+              });
+          }}
         />
       </div>
       <div className={styles.legend}>
