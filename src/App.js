@@ -46,7 +46,7 @@ function App() {
   const [listings, setListings] = useState([]);
   const [isListingLimitExceeded, setIsListingLimitExceeded] = useState(false);
   const [selectedListingId, setSelectedListingId] = useState();
-  const selectedListing = listings.find(l => l.id === selectedListingId) || {};
+  const selectedListing = listings.find(l => l.id === selectedListingId);
   return (
     <div className={styles.container}>
       <div className={styles.map}>
@@ -56,11 +56,14 @@ function App() {
         />
       </div>
       <div className={styles.listing}>
-        <Listing
-          displayPrice={selectedListing.displayPrice}
-          url={selectedListing.url}
-          images={selectedListing.images}
-        />
+        {selectedListing && <Listing
+          displayPrice={selectedListing && selectedListing.displayPrice}
+          url={selectedListing && selectedListing.url}
+          images={selectedListing && selectedListing.images}
+        />}
+        {!selectedListing && <div className={styles.noListing}>
+          <div>Hover over a listing to see details</div>
+        </div>}
       </div>
       <div className={styles.status}>
         <Status

@@ -45,3 +45,10 @@
   grid-area: legend;
   height: 180px;
 }
+
+.noListing {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
