@@ -11,7 +11,7 @@ import {
   PROPERTY_TYPE_AUF
 } from './util/constants';
 
-const listings = dataset
+const getListings = () => Promise.resolve(dataset
   .filter(item => item.type === 'PropertyListing')
   .map(item => item.listing)
   .filter(listing => [
@@ -32,9 +32,10 @@ const listings = dataset
       listing.propertyDetails.longitude,
       listing.propertyDetails.latitude,
     ],
-  }));
+  })));
 
 function App() {
+  const [listings, setListings] = useState([]);
   const [selectedListingId, setSelectedListingId] = useState();
   const selectedListing = listings.find(l => l.id === selectedListingId) || {};
   return (
@@ -53,7 +54,10 @@ function App() {
         />
       </div>
       <div className={styles.status}>
-        <Status />
+        <Status
+          numListings={listings.length}
+          onClickSearch={() => getListings().then(setListings)}
+        />
       </div>
       <div className={styles.legend}>
         <Legend />
