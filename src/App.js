@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import Map from './components/Map';
 import Listing from './components/Listing';
 import Legend from './components/Legend';
+import Status from './components/Status';
 import styles from './App.module.css';
 import dataset from './data/clayton.response.json';
 import {
@@ -52,7 +53,7 @@ function App() {
         />
       </div>
       <div className={styles.status}>
-        <span>Status</span>
+        <Status />
       </div>
       <div className={styles.legend}>
         <Legend />
