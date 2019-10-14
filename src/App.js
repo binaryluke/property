@@ -1,45 +1,19 @@
 import React, {useState} from 'react';
+import axios from 'axios';
 import Map from './components/Map';
 import Listing from './components/Listing';
 import Legend from './components/Legend';
 import Status from './components/Status';
 import styles from './App.module.css';
-import dataset from './data/clayton.response.json';
-import {
-  PROPERTY_TYPE_HOUSE,
-  PROPERTY_TYPE_TOWNHOUSE,
-  PROPERTY_TYPE_AUF
-} from './util/constants';
 
-const getListings = () => {
-  const isListingLimitExceeded = dataset.length >= 20;
-  const listings = dataset
-    .filter(item => item.type === 'PropertyListing')
-    .map(item => item.listing)
-    .filter(listing => [
-      PROPERTY_TYPE_HOUSE,
-      PROPERTY_TYPE_TOWNHOUSE,
-      PROPERTY_TYPE_AUF
-    ].includes(listing.propertyDetails.propertyType))
-    .map(listing => ({
-      id: listing.id,
-      type: listing.propertyDetails.propertyType,
-      price: listing.priceDetails.price,
-      displayPrice: listing.priceDetails.displayPrice,
-      url: `https://www.domain.com.au/${listing.listingSlug}`,
-      images: listing.media
-        .filter(m => m.category === 'Image')
-        .map(m => m.url),
-      coordinates: [
-        listing.propertyDetails.longitude,
-        listing.propertyDetails.latitude,
-      ],
-    }));
-
-  return Promise.resolve({
-    listings,
-    isListingLimitExceeded,
-  })
+const getListings = ({longitude, latitude, radius}) => {
+  return axios.get('http://localhost:8888/listings', {
+    params: {
+      longitude,
+      latitude,
+      radius,
+    },
+  });
 };
 
 function App() {
@@ -80,8 +54,10 @@ function App() {
           isListingLimitExceeded={isListingLimitExceeded}
           isSearchDisabled={(longitude === lastSearchLongitude) && (latitude === lastSearchLatitude)}
           onClickSearch={() => {
-            getListings()
-              .then(({listings, isListingLimitExceeded}) => {
+            getListings({longitude, latitude, radius: 2000})
+              .then(({data}) => {
+                const {listings, isListingLimitExceeded} = data;
+                console.log(listings);
                 setLastSearchLongitude(longitude);
                 setLastSearchLatitude(latitude);
                 setListings(listings);
