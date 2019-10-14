@@ -57,7 +57,6 @@ function App() {
             getListings({longitude, latitude, radius: 2000})
               .then(({data}) => {
                 const {listings, isListingLimitExceeded} = data;
-                console.log(listings);
                 setLastSearchLongitude(longitude);
                 setLastSearchLatitude(latitude);
                 setListings(listings);
