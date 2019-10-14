@@ -1,68 +1,42 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Quickstart Guide
 
-## Available Scripts
+To run the application in development mode:
 
-In the project directory, you can run:
+1. `make client-install && make server-install`
+2. `make server-start`
+3. In another terminal window: `make client-start`
 
-### `npm start`
-
-Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.<br />
+The page will reload if you make edits.
+
 You will also see any lint errors in the console.
 
-### `npm test`
+## Building & Packaging for Production
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+This application is designed to be deployed with Docker.
 
-### `npm run build`
+There are two images to build: `property-server` and `property-client`.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Update package.json: Change "homepage" to be the domain name you will serve the site from
+2. Install dependencies: `make server-install && make client install`
+3. Run the build: `make client-build`
+4. Create Docker images: `make server-package && make client-package`
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+## Deploying to Production
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Now that you've built your production ready Docker images, you need to deploy them.
 
-### `npm run eject`
+Further instructions to give guidance on this.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Why did I build this application?
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+I watched a video from the Uber visualisation team talking about their open source library Deck.gl and had that "giddy" feeling us tech nerds get when we stumble across awesome tech for the first time. Reading more, I also learned about the incredible MapGL library which I had no idea about before.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+I had an intense desire to build something with it, so I went searching for a data source. Been map based the first thing that came to mind was real estate. That led me to find the Domain API and I came up with the idea of visualising prices for property that is for sale.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+This application is the result.
 
-## Learn More
+## Credit
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
