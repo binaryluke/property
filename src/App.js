@@ -7,7 +7,7 @@ import Status from './components/Status';
 import styles from './App.module.css';
 
 const getListings = ({longitude, latitude, radius}) => {
-  return axios.get('http://localhost:8888/listings', {
+  return axios.get('/property-api/listings', {
     params: {
       longitude,
       latitude,
