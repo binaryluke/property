@@ -1,5 +1,5 @@
 server-install:
-	cd server && npm install
+	docker run -it --rm -v "${PWD}/server":/app -w /app node npm install
 
 server-package:
 	docker build -t property-server ./server
@@ -9,13 +9,13 @@ server-publish:
 	docker push 690036067783.dkr.ecr.ap-southeast-2.amazonaws.com/property-server:latest
 
 server-start:
-	cd server && npm run start
+	docker run -it --rm -v "${PWD}/server":/app -w /app node npm start
 
 client-install:
-	npm install
+	docker run -it --rm -v "${PWD}":/app -w /app node npm install
 
 client-build:
-	npm run build
+	docker run -it --rm -v "${PWD}":/app -w /app node npm run build
 
 client-package:
 	docker build -t property-client .
@@ -25,4 +25,4 @@ client-publish:
 	docker push 690036067783.dkr.ecr.ap-southeast-2.amazonaws.com/property-client:latest
 
 client-start:
-	npm run start
+	docker run -it --rm -v "${PWD}":/app -w /app node npm start
