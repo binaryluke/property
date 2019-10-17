@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import Map from './components/Map';
 import Listing from './components/Listing';
@@ -17,6 +17,7 @@ const getListings = ({longitude, latitude, radius}) => {
 };
 
 function App() {
+  const [mapToken, setMapToken] = useState();
   const [listings, setListings] = useState([]);
   const [isListingLimitExceeded, setIsListingLimitExceeded] = useState(false);
   const [selectedListingId, setSelectedListingId] = useState();
@@ -26,10 +27,15 @@ function App() {
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
 
+  useEffect(() => {
+    axios.get('/property-api/tokens').then(({data}) => setMapToken(data.mapGL));
+  });
+
   return (
     <div className={styles.container}>
       <div className={styles.map}>
         <Map
+          token={mapToken}
           listings={listings}
           onChangeSelectedListing={setSelectedListingId}
           onMapMove={(longitude, latitude) => {

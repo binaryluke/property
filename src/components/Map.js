@@ -8,9 +8,6 @@ import {
   PROPERTY_TYPE_AUF
 } from '../util/constants';
 
-// Set your mapbox access token here
-const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiYmluYXJ5bHVrZSIsImEiOiJjazFqNWIyNTYxM3d2M2dzMGc5eHJmdDV6In0.GSRpcHwrbqB3IWKrwaDKUg';
-
 const getLayer = (listings, changeSelectedListing) => ({
   id: 'grid-cell-layer',
   data: listings,
@@ -42,15 +39,17 @@ const initialViewState = {
   bearing: 0
 };
 
-function Map({listings, onChangeSelectedListing, onMapMove}) {
+function Map({token, listings, onChangeSelectedListing, onMapMove}) {
   useEffect(() => {
     // Let parent component know the initial latitude/longitude of the map
     onMapMove(initialViewState.longitude, initialViewState.latitude);
-  }, []);
+  }, [onMapMove]);
 
   const layers = [
     new GridCellLayer(getLayer(listings, onChangeSelectedListing))
   ];
+
+  if (!token) return null;
 
   return (
     <DeckGL
@@ -62,7 +61,7 @@ function Map({listings, onChangeSelectedListing, onMapMove}) {
       }}
     >
       <StaticMap
-        mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
+        mapboxApiAccessToken={token}
         mapStyle="mapbox://styles/mapbox/dark-v9"
       />
     </DeckGL>
@@ -70,6 +69,7 @@ function Map({listings, onChangeSelectedListing, onMapMove}) {
 }
 
 Map.defaultProps = {
+  token: '',
   listings: [],
   onChangeSelectedListing: () => null,
   onMapMove: () => null,

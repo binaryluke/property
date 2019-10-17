@@ -5,22 +5,19 @@
     "sortKey": "Default",
     "direction": "Ascending",
     "proximityTo": {
-      "lat": -37.9310053,
-      "lon": 145.123716
+      "lat": 0,
+      "lon": 0
     }
   },
   "page": 0,
   "pageSize": 200,
   "geoWindow": {
-    "box": {
-      "topLeft": {
-        "lat": -37.903704,
-        "lon": 145.0603463
+    "circle": {
+      "center": {
+        "lat": 0,
+        "lon": 0
       },
-      "bottomRight": {
-        "lat": -37.956786,
-        "lon": 145.1824093
-      }
+      "radiusInMeters": 0
     }
   }
 }

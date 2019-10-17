@@ -12,13 +12,19 @@ function Listing({displayPrice, url, images}) {
         <img
           src={images[0] || ''}
           width="250px"
+          alt="Property"
         />
       </div>
       <div className={styles.price}>
         <span>{displayPrice}</span>
       </div>
       <div className={styles.link}>
-        <a href={url} target="_blank">{urlText}</a>
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer">
+          {urlText}
+        </a>
       </div>
     </div>
   );
