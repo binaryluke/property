@@ -51,7 +51,7 @@ function App() {
           images={selectedListing && selectedListing.images}
         />}
         {!selectedListing && <div className={styles.noListing}>
-          <div>Hover over a listing to see details</div>
+          <div>Click on a listing to see details</div>
         </div>}
       </div>
       <div className={styles.status}>

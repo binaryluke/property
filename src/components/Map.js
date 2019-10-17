@@ -23,7 +23,7 @@ const getLayer = (listings, changeSelectedListing) => ({
     return [0, 0, 0];
   },
   getElevation: d => Math.sqrt(d.price),
-  onHover: ({object, x, y}) => {
+  onClick: ({object}) => {
     if (!object) return;
     changeSelectedListing(object.id);
   }
