@@ -38,9 +38,9 @@ function App() {
           token={mapToken}
           listings={listings}
           onChangeSelectedListing={setSelectedListingId}
-          onMapMove={(longitude, latitude) => {
-            setLongitude(longitude);
-            setLatitude(latitude);
+          onMapMove={(nextLongitude, nextLatitude) => {
+            setLongitude(nextLongitude);
+            setLatitude(nextLatitude);
           }}
         />
       </div>

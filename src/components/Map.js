@@ -43,7 +43,7 @@ function Map({token, listings, onChangeSelectedListing, onMapMove}) {
   useEffect(() => {
     // Let parent component know the initial latitude/longitude of the map
     onMapMove(initialViewState.longitude, initialViewState.latitude);
-  }, [onMapMove]);
+  }, []);
 
   const layers = [
     new GridCellLayer(getLayer(listings, onChangeSelectedListing))
