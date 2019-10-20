@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const axios = require('axios')
-const request = require('./data/request.json');
+const DOMAIN_REQUEST = require('./data/request.json');
 
 if (!process.env.DOMAIN_API_KEY) {
   console.error('You must make your Domain API key available with the DOMAIN_API_KEY environment variable.');
@@ -11,6 +11,10 @@ if (!process.env.DOMAIN_API_KEY) {
 if (!process.env.MAPGL_ACCESS_TOKEN) {
   console.error('You must make your MapGL access token available with the MAPGL_ACCESS_TOKEN environment variable.');
   process.exit(1);
+}
+
+if (process.env.NODE_ENV !== 'production') {
+  Object.freeze(DOMAIN_REQUEST);
 }
 
 const PROPERTY_TYPE_HOUSE = 'House';
@@ -58,12 +62,28 @@ app.get('/tokens', (req, res) => res.json({
 }));
 
 app.get('/listings', (req, res) => {
-  const { longitude, latitude, radius } = req.query;
-  const requestBody = {...request};
-  request.geoWindow.circle.center.lat = request.sort.proximityTo.lat = latitude;
-  request.geoWindow.circle.center.lon = request.sort.proximityTo.lon = longitude;
-  request.geoWindow.circle.radiusInMeters = radius;
-  axios.post(DOMAIN_API_URI, requestBody)
+  // Map bounds from client request
+  const {
+    centerLon,
+    centerLat,
+    nwLon,
+    nwLat,
+    seLon,
+    seLat,
+  } = req.query;
+
+  const domainRequestBody = {
+    ...DOMAIN_REQUEST,
+  };
+
+  domainRequestBody.sort.proximityTo.lon = centerLon;
+  domainRequestBody.sort.proximityTo.lat = centerLat;
+  domainRequestBody.geoWindow.box.topLeft.lon = nwLon;
+  domainRequestBody.geoWindow.box.topLeft.lat = nwLat;
+  domainRequestBody.geoWindow.box.bottomRight.lon = seLon;
+  domainRequestBody.geoWindow.box.bottomRight.lat = seLat;
+
+  axios.post(DOMAIN_API_URI, domainRequestBody)
     .then(response => {
       res.json({
         listings: parseListings(response.data),

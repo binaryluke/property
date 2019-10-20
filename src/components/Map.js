@@ -1,7 +1,8 @@
 import React, {useEffect} from 'react';
 import DeckGL from '@deck.gl/react';
 import {GridCellLayer} from '@deck.gl/layers';
-import {StaticMap} from 'react-map-gl';
+import {WebMercatorViewport} from '@deck.gl/core';
+import {InteractiveMap} from 'react-map-gl';
 import {
   PROPERTY_TYPE_HOUSE,
   PROPERTY_TYPE_TOWNHOUSE,
@@ -57,10 +58,16 @@ function Map({token, listings, onChangeSelectedListing, onMapMove}) {
       controller={true}
       layers={layers}
       onViewStateChange={({viewState}) => {
-        onMapMove(viewState.longitude, viewState.latitude);
+        const viewport = new WebMercatorViewport(viewState);
+
+        const center = [viewState.longitude, viewport.latitude];
+        const nw = viewport.unproject([0, 0]);
+        const se = viewport.unproject([viewport.width, viewport.height]);
+
+        onMapMove(center, nw, se);
       }}
     >
-      <StaticMap
+      <InteractiveMap
         mapboxApiAccessToken={token}
         mapStyle="mapbox://styles/mapbox/dark-v9"
       />

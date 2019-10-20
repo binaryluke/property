@@ -12,12 +12,15 @@
   "page": 0,
   "pageSize": 200,
   "geoWindow": {
-    "circle": {
-      "center": {
+    "box": {
+      "topLeft": {
         "lat": 0,
         "lon": 0
       },
-      "radiusInMeters": 0
+      "bottomRight": {
+        "lat": 0,
+        "lon": 0
+      }
     }
   }
 }

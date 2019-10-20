@@ -6,6 +6,15 @@ import Legend from './components/Legend';
 import Status from './components/Status';
 import styles from './App.module.css';
 
+const INITIAL_MAP_BOUNDS = {
+  centerLon: 0,
+  centerLat: 0,
+  nwLon: 0,
+  nwLat: 0,
+  seLon: 0,
+  seLat: 0,
+};
+
 const getListings = ({longitude, latitude, radius}) => {
   return axios.get('/property-api/listings', {
     params: {
@@ -21,15 +30,14 @@ function App() {
   const [listings, setListings] = useState([]);
   const [isListingLimitExceeded, setIsListingLimitExceeded] = useState(false);
   const [selectedListingId, setSelectedListingId] = useState();
-  const selectedListing = listings.find(l => l.id === selectedListingId);
-  const [lastSearchLongitude, setLastSearchLongitude] = useState(0);
-  const [lastSearchLatitude, setLastSearchLatitude] = useState(0);
-  const [longitude, setLongitude] = useState(0);
-  const [latitude, setLatitude] = useState(0);
+  const [lastSearchMapBounds, setLastSearchMapBounds] = useState(INITIAL_MAP_BOUNDS);
+  const [mapBounds, setMapBounds] = useState(INITIAL_MAP_BOUNDS);
 
   useEffect(() => {
     axios.get('/property-api/tokens').then(({data}) => setMapToken(data.mapGL));
   });
+
+  const selectedListing = listings.find(l => l.id === selectedListingId);
 
   return (
     <div className={styles.container}>
@@ -38,9 +46,19 @@ function App() {
           token={mapToken}
           listings={listings}
           onChangeSelectedListing={setSelectedListingId}
-          onMapMove={(nextLongitude, nextLatitude) => {
-            setLongitude(nextLongitude);
-            setLatitude(nextLatitude);
+          onMapMove={(center=[], nw=[], se=[]) => {
+            // Handle edge case where map sends us undefined prior to map initilisation
+            if (center.length !== 2 || nw.length !== 2 || se.length !== 2) return;
+
+            // Parameters sent in format `[longitude, latitude]`
+            setMapBounds({
+              centerLon: center[0],
+              centerLat: center[1],
+              nwLon: nw[0],
+              nwLat: nw[1],
+              seLon: se[0],
+              seLat: se[1],
+            });
           }}
         />
       </div>
@@ -58,13 +76,12 @@ function App() {
         <Status
           numListings={listings.length}
           isListingLimitExceeded={isListingLimitExceeded}
-          isSearchDisabled={(longitude === lastSearchLongitude) && (latitude === lastSearchLatitude)}
+          isSearchDisabled={lastSearchMapBounds === mapBounds}
           onClickSearch={() => {
-            getListings({longitude, latitude, radius: 2000})
+            getListings(mapBounds)
               .then(({data}) => {
                 const {listings, isListingLimitExceeded} = data;
-                setLastSearchLongitude(longitude);
-                setLastSearchLatitude(latitude);
+                setLastSearchMapBounds(mapBounds);
                 setListings(listings);
                 setIsListingLimitExceeded(isListingLimitExceeded);
               });
