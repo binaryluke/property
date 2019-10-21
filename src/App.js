@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
+import Title from './components/Title';
 import Map from './components/Map';
 import Listing from './components/Listing';
 import Legend from './components/Legend';
@@ -37,6 +38,9 @@ function App() {
 
   return (
     <div className={styles.container}>
+      <div className={styles.title}>
+        <Title />
+      </div>
       <div className={styles.map}>
         <Map
           token={mapToken}

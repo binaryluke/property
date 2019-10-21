@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.img {
+  height: 100%;
+  margin-right: 10px;
+}
+
+.img img {
+  height: 100%;
+}
+
+.title h1,
+.title h2 {
+  margin: 0;
+  padding: 0;
+}
+
+.title h1 {
+  font-size: 20px;
+}
+
+.title h2 {
+  font-size: 16px;
+  font-style: italic;
+}
