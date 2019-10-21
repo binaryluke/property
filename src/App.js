@@ -15,13 +15,9 @@ const INITIAL_MAP_BOUNDS = {
   seLat: 0,
 };
 
-const getListings = ({longitude, latitude, radius}) => {
+const getListings = (mapBounds) => {
   return axios.get('/property-api/listings', {
-    params: {
-      longitude,
-      latitude,
-      radius,
-    },
+    params: mapBounds,
   });
 };
 
@@ -78,10 +74,10 @@ function App() {
           isListingLimitExceeded={isListingLimitExceeded}
           isSearchDisabled={lastSearchMapBounds === mapBounds}
           onClickSearch={() => {
+            setLastSearchMapBounds(mapBounds);
             getListings(mapBounds)
               .then(({data}) => {
                 const {listings, isListingLimitExceeded} = data;
-                setLastSearchMapBounds(mapBounds);
                 setListings(listings);
                 setIsListingLimitExceeded(isListingLimitExceeded);
               });
