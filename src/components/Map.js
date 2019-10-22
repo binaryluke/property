@@ -31,10 +31,10 @@ const getLayer = (listings, changeSelectedListing) => ({
 });
 
 
-// Viewport settings
+// Viewport settings - default to Melbourne
 const initialViewState = {
-  longitude: 145.123716,
-  latitude: -37.9310053,
+  longitude: 144.96387836092487,
+  latitude: -37.815738101632384,
   zoom: 13,
   pitch: 0,
   bearing: 0
