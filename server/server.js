@@ -29,7 +29,12 @@ const port = 8888;
 const isListingLimitExceeded = response => response.length >= 200;
 const parseListings = response => response
   .filter(item => item.type === 'PropertyListing')
-  .map(item => item.listing)
+  .map(item => ({
+    propertyDetails: {},
+    priceDetails: {},
+    media: [],
+    ...item.listing,
+  }))
   .filter(listing => [
     PROPERTY_TYPE_HOUSE,
     PROPERTY_TYPE_TOWNHOUSE,
@@ -85,6 +90,7 @@ app.get('/listings', (req, res) => {
 
   axios.post(DOMAIN_API_URI, domainRequestBody)
     .then(response => {
+      console.log(response.data);
       res.json({
         listings: parseListings(response.data),
         isListingLimitExceeded: isListingLimitExceeded(response.data),

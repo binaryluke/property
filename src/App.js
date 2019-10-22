@@ -5,6 +5,7 @@ import Map from './components/Map';
 import Listing from './components/Listing';
 import Legend from './components/Legend';
 import Status from './components/Status';
+import Nav from './components/Nav';
 import styles from './App.module.css';
 
 const INITIAL_MAP_BOUNDS = {
@@ -92,6 +93,9 @@ function App() {
         <div className={styles.legend}>
           <Legend />
         </div>
+      </div>
+      <div className={styles.paneSelector}>
+        <Nav />
       </div>
     </div>
   );

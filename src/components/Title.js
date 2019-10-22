@@ -11,7 +11,7 @@ function Title() {
       </div>
       <div className={styles.title}>
         <h1>Luke Howard - Property App</h1>
-        <h2>Visualise prices for property on sale in Australia</h2>
+        <h2>Visualise prices of property on sale in Australia</h2>
       </div>
     </div>
   );
