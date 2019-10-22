@@ -1,21 +1,19 @@
 import React from 'react';
 import styles from './Nav.module.css';
 
-function Nav() {
+function Nav({onNavigateTo, showListing}) {
   return (
     <ul className={styles.container}>
-      <li>Map</li>
-      <li>Listing</li>
-      <li>Legend</li>
+      <li onClick={() => onNavigateTo('MAP')}>Map</li>
+      {showListing && <li onClick={() => onNavigateTo('LISTING')}>Listing</li>}
+      <li onClick={() => onNavigateTo('LEGEND')}>Legend</li>
     </ul>
   );
 }
 
 Nav.defaultProps = {
-  numListings: 0,
-  isListingLimitExceeded: false,
-  isSearchDisabled: true,
-  onClickSearch: () => null,
+  onNavigateTo: () => null,
+  showListing: false,
 };
 
 export default Nav;

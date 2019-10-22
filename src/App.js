@@ -24,6 +24,8 @@ const getListings = (mapBounds) => {
 };
 
 function App() {
+  const isResponsive = window.matchMedia('(min-width: 20em)');
+  const [selectedNavItem, setSelectedNavItem] = useState('MAP');
   const [mapToken, setMapToken] = useState();
   const [listings, setListings] = useState([]);
   const [isListingLimitExceeded, setIsListingLimitExceeded] = useState(false);
@@ -43,7 +45,7 @@ function App() {
         <Title />
       </div>
       <div className={styles.contentContainer}>
-        <div className={styles.map}>
+        {isResponsive && selectedNavItem === 'MAP' && <div className={styles.map}>
           <Map
             token={mapToken}
             listings={listings}
@@ -63,8 +65,8 @@ function App() {
               });
             }}
           />
-        </div>
-        <div className={styles.listing}>
+        </div>}
+        {isResponsive && selectedNavItem === 'LISTING' && <div className={styles.listing}>
           {selectedListing && <Listing
             displayPrice={selectedListing && selectedListing.displayPrice}
             url={selectedListing && selectedListing.url}
@@ -73,8 +75,8 @@ function App() {
           {!selectedListing && <div className={styles.noListing}>
             <div>Click on a listing to see details</div>
           </div>}
-        </div>
-        <div className={styles.status}>
+        </div>}
+        {isResponsive && selectedNavItem === 'MAP' && <div className={styles.status}>
           <Status
             numListings={listings.length}
             isListingLimitExceeded={isListingLimitExceeded}
@@ -89,13 +91,13 @@ function App() {
                 });
             }}
           />
-        </div>
-        <div className={styles.legend}>
+        </div>}
+        {isResponsive && selectedNavItem === 'LEGEND' && <div className={styles.legend}>
           <Legend />
-        </div>
+        </div>}
       </div>
       <div className={styles.paneSelector}>
-        <Nav />
+        <Nav onNavigateTo={navItem => setSelectedNavItem(navItem)} showListing={Boolean(selectedListing)} />
       </div>
     </div>
   );
