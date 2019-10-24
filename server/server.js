@@ -88,7 +88,7 @@ app.get('/listings', (req, res) => {
   domainRequestBody.geoWindow.box.bottomRight.lon = seLon;
   domainRequestBody.geoWindow.box.bottomRight.lat = seLat;
 
-  console.log('Request: ', domainRequestBody);
+  console.log('Request location: ', [centerLon, centerLat, nwLon, nwLat, seLon, seLat]);
 
   axios.post(DOMAIN_API_URI, domainRequestBody)
     .then(response => {

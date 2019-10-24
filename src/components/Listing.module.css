@@ -7,7 +7,7 @@
 
 .image {
   overflow: hidden;
-  margin:auto;
+  margin: auto;
   padding: 10px;
 }
 
@@ -17,7 +17,7 @@
 
 .price,
 .link {
-  text-align: right;
+  text-align: center;
   margin-bottom: 20px;
   margin-right: 10px;
 }
