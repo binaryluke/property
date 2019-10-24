@@ -10,3 +10,43 @@
 .numListingsExceeded {
   color: red;
 }
+
+.search button {
+  padding: 20px;
+}
+
+.search button:disabled {
+  color: black;
+  text-transform: uppercase;
+  text-decoration: none;
+  background: #eee;
+  border-radius: 5px;
+  display: inline-block;
+  border: none;
+  transition: all 0.4s ease 0s;
+}
+
+.search button:not([disabled]) {
+  color: #fff !important;
+  text-transform: uppercase;
+  text-decoration: none;
+  background: rgb(51, 139, 255);
+  border-radius: 5px;
+  display: inline-block;
+  border: none;
+}
+
+.search button:hover:not([disabled]) {
+  background: #434343;
+  transition: all 0.4s ease 0s;
+}
+
+@media only screen and (max-width: 992px) {
+  .contentContainer * {
+    font-size: 10px;
+  }
+
+  .button {
+    padding: 5px;
+  }
+}

@@ -88,9 +88,11 @@ app.get('/listings', (req, res) => {
   domainRequestBody.geoWindow.box.bottomRight.lon = seLon;
   domainRequestBody.geoWindow.box.bottomRight.lat = seLat;
 
+  console.log('Request: ', domainRequestBody);
+
   axios.post(DOMAIN_API_URI, domainRequestBody)
     .then(response => {
-      console.log(response.data);
+      console.log('Number of listings: ', response.data.length);
       res.json({
         listings: parseListings(response.data),
         isListingLimitExceeded: isListingLimitExceeded(response.data),

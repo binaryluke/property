@@ -23,8 +23,16 @@ const getListings = (mapBounds) => {
   });
 };
 
+const showArea = (areaName, selectedNavItem, isResponsive) => {
+  if (isResponsive) {
+    return selectedNavItem === areaName;
+  }
+  return true;
+};
+
 function App() {
-  const isResponsive = window.matchMedia('(min-width: 20em)');
+  const isResponsive = window.matchMedia('only screen and (max-width: 992px)').matches;
+  console.log(isResponsive);
   const [selectedNavItem, setSelectedNavItem] = useState('MAP');
   const [mapToken, setMapToken] = useState();
   const [listings, setListings] = useState([]);
@@ -45,7 +53,7 @@ function App() {
         <Title />
       </div>
       <div className={styles.contentContainer}>
-        {isResponsive && selectedNavItem === 'MAP' && <div className={styles.map}>
+        {showArea('MAP', selectedNavItem, isResponsive) && <div className={styles.map}>
           <Map
             token={mapToken}
             listings={listings}
@@ -66,7 +74,7 @@ function App() {
             }}
           />
         </div>}
-        {isResponsive && selectedNavItem === 'LISTING' && <div className={styles.listing}>
+        {showArea('LISTING', selectedNavItem, isResponsive) && <div className={styles.listing}>
           {selectedListing && <Listing
             displayPrice={selectedListing && selectedListing.displayPrice}
             url={selectedListing && selectedListing.url}
@@ -76,7 +84,7 @@ function App() {
             <div>Click on a listing to see details</div>
           </div>}
         </div>}
-        {isResponsive && selectedNavItem === 'MAP' && <div className={styles.status}>
+        {showArea('MAP', selectedNavItem, isResponsive) && <div className={styles.status}>
           <Status
             numListings={listings.length}
             isListingLimitExceeded={isListingLimitExceeded}
@@ -92,7 +100,7 @@ function App() {
             }}
           />
         </div>}
-        {isResponsive && selectedNavItem === 'LEGEND' && <div className={styles.legend}>
+        {showArea('LEGEND', selectedNavItem, isResponsive) && <div className={styles.legend}>
           <Legend />
         </div>}
       </div>
