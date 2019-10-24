@@ -15,7 +15,7 @@ const getLayer = (listings, changeSelectedListing) => ({
   pickable: true,
   extruded: true,
   cellSize: 50,
-  elevationScale: 1,
+  elevationScale: 0.001,
   getPosition: d => d.coordinates,
   getFillColor: d => {
     if (d.type === PROPERTY_TYPE_HOUSE) return [255, 65, 51]; // #ff4133
@@ -23,7 +23,7 @@ const getLayer = (listings, changeSelectedListing) => ({
     else if (d.type === PROPERTY_TYPE_AUF) return [51, 255, 167]; // #33ffa7
     return [0, 0, 0];
   },
-  getElevation: d => Math.sqrt(d.price),
+  getElevation: d => d.price,
   onClick: ({object}) => {
     if (!object) return;
     changeSelectedListing(object.id);
