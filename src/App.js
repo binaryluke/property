@@ -32,7 +32,6 @@ const showArea = (areaName, selectedNavItem, isResponsive) => {
 
 function App() {
   const isResponsive = window.matchMedia('only screen and (max-width: 992px)').matches;
-  console.log(isResponsive);
   const [selectedNavItem, setSelectedNavItem] = useState('MAP');
   const [mapToken, setMapToken] = useState();
   const [listings, setListings] = useState([]);
@@ -40,6 +39,7 @@ function App() {
   const [selectedListingId, setSelectedListingId] = useState();
   const [lastSearchMapBounds, setLastSearchMapBounds] = useState(INITIAL_MAP_BOUNDS);
   const [mapBounds, setMapBounds] = useState(INITIAL_MAP_BOUNDS);
+  const [zoom, setZoom] = useState(0);
 
   useEffect(() => {
     axios.get('/property-api/tokens').then(({data}) => setMapToken(data.mapGL));
@@ -58,7 +58,7 @@ function App() {
             token={mapToken}
             listings={listings}
             onChangeSelectedListing={setSelectedListingId}
-            onMapMove={(center=[], nw=[], se=[]) => {
+            onMapMove={(center=[], nw=[], se=[], zoom) => {
               // Handle edge case where map sends us undefined prior to map initilisation
               if (center.length !== 2 || nw.length !== 2 || se.length !== 2) return;
 
@@ -71,6 +71,8 @@ function App() {
                 seLon: se[0],
                 seLat: se[1],
               });
+
+              setZoom(zoom);
             }}
           />
         </div>}
@@ -88,7 +90,8 @@ function App() {
           <Status
             numListings={listings.length}
             isListingLimitExceeded={isListingLimitExceeded}
-            isSearchDisabled={lastSearchMapBounds === mapBounds}
+            zoom={zoom}
+            hasMapMoved={lastSearchMapBounds !== mapBounds}
             onClickSearch={() => {
               setLastSearchMapBounds(mapBounds);
               getListings(mapBounds)

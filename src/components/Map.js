@@ -36,14 +36,29 @@ const initialViewState = {
   longitude: 144.96387836092487,
   latitude: -37.815738101632384,
   zoom: 13,
-  pitch: 0,
+  pitch: 120,
   bearing: 0
 };
+
+const getMapMoveParams = viewState => {
+  const viewport = new WebMercatorViewport(viewState);
+
+  const center = [viewState.longitude, viewport.latitude];
+  const nw = viewport.unproject([0, 0]);
+  const se = viewport.unproject([viewport.width, viewport.height]);
+
+  return {
+    center,
+    nw,
+    se,
+  };
+}
 
 function Map({token, listings, onChangeSelectedListing, onMapMove}) {
   useEffect(() => {
     // Let parent component know the initial latitude/longitude of the map
-    onMapMove(initialViewState.longitude, initialViewState.latitude);
+    const {center, nw, se} = getMapMoveParams(initialViewState);
+    onMapMove(center, nw, se, initialViewState.zoom);
   }, []);
 
   const layers = [
@@ -58,13 +73,8 @@ function Map({token, listings, onChangeSelectedListing, onMapMove}) {
       controller={true}
       layers={layers}
       onViewStateChange={({viewState}) => {
-        const viewport = new WebMercatorViewport(viewState);
-
-        const center = [viewState.longitude, viewport.latitude];
-        const nw = viewport.unproject([0, 0]);
-        const se = viewport.unproject([viewport.width, viewport.height]);
-
-        onMapMove(center, nw, se);
+        const {center, nw, se, zoom} = getMapMoveParams(viewState);
+        onMapMove(center, nw, se, viewState.zoom);
       }}
     >
       <InteractiveMap
