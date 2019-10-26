@@ -64,9 +64,12 @@ app.get('/', (req, res) => {
 });
 
 app.get('/tokens', (req, res) => {
-  const ip = '110.140.145.202';
-  const { ll } = geoip.lookup(ip);
-  console.log(ll);
+  const ip = req.ip;//'110.140.145.202';
+  const { ll } = geoip.lookup(ip) || {
+    // default to Melbourne geo coords if ip lookup unsuccessful
+    ll: [-37.8071, 144.9516],
+  };
+  console.log(`User with ip ${req.ip} loaded page at location ${ll}`);
   res.json({
     mapGL: process.env.MAPGL_ACCESS_TOKEN,
     ipLocation: {
@@ -98,11 +101,13 @@ app.get('/listings', (req, res) => {
   domainRequestBody.geoWindow.box.bottomRight.lon = seLon;
   domainRequestBody.geoWindow.box.bottomRight.lat = seLat;
 
-  console.log('Request location: ', [centerLon, centerLat, nwLon, nwLat, seLon, seLat]);
+  const locationLog = `[${centerLon}, ${centerLat}, ${nwLon}, ${nwLat}, ${seLon}, ${seLat}]`;
+
+  console.log(`User searched location ${locationLog}`);
 
   axios.post(DOMAIN_API_URI, domainRequestBody)
     .then(response => {
-      console.log('Number of listings: ', response.data.length);
+      console.log(`Number of listings for search ${locationLog}: ${response.data.length}`);
       res.json({
         listings: parseListings(response.data),
         isListingLimitExceeded: isListingLimitExceeded(response.data),
