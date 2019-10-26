@@ -60,28 +60,31 @@ function Map({token, defaultLocation, listings, onChangeSelectedListing, onMapMo
   const [viewState, setViewState] = useState({
     ...VIEW_STATE_DEFAULTS,
   });
+  const [isReady, setIsReady] = useState(false);
 
-  // Update view state when default location changes
+  // Set initial view state
   useEffect(() => {
-    if (!defaultLocation) return;
+    if (isReady || !token || !defaultLocation || !width || !height) return;
+
     setViewState({
       ...viewState,
       longitude: defaultLocation && defaultLocation.longitude,
       latitude: defaultLocation && defaultLocation.latitude,
-    });
-  }, [defaultLocation]);
-
-  // Update view state when the map is resized
-  useEffect(() => {
-    setViewState({
-      ...viewState,
       width,
       height,
     });
-  }, [width, height]);
+
+    setIsReady(true);
+  }, [isReady, token, defaultLocation, width, height]);
+
+  // Update parent with location when view state changes
+  useEffect(() => {
+    const {center, nw, se} = getMapMoveParams(viewState);
+    onMapMove(center, nw, se, viewState.zoom);
+  }, [viewState]);
 
   // Delay rendering Deck GL & Mapbox until we have access keys and default location
-  if (!token || !defaultLocation) return <div className={styles.container} ref={ref} />;
+  if (!isReady) return <div className={styles.container} ref={ref} />;
 
   const layers = [
     new GridCellLayer(getLayer(listings, onChangeSelectedListing))
@@ -93,16 +96,7 @@ function Map({token, defaultLocation, listings, onChangeSelectedListing, onMapMo
         viewState={viewState}
         controller={true}
         layers={layers}
-        onViewStateChange={({viewState}) => {
-          setViewState(viewState);
-          const {center, nw, se} = getMapMoveParams(viewState);
-          onMapMove(center, nw, se, viewState.zoom);
-        }}
-        onLoad={() => {
-          // Let parent component know the initial latitude/longitude of the map
-          const {center, nw, se} = getMapMoveParams(viewState);
-          onMapMove(center, nw, se, viewState.zoom);
-        }}
+        onViewStateChange={({viewState}) => setViewState(viewState)}
       >
         <InteractiveMap
           mapboxApiAccessToken={token}
