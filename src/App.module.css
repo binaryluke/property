@@ -70,19 +70,23 @@
   height: 100%;
 }
 
+.hidden {}
+
 @media only screen and (max-width: 992px) {
   .contentContainer {
     grid-template-areas:
       "expandable"
-      "fixed";
+      "fixed"
+      "hidden";
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr min-content;
+    grid-template-rows: 1fr min-content 0;
   }
 
   .map,
   .listing,
   .legend {
     grid-area: expandable;
+    overflow: hidden;
   }
 
   .legend {
@@ -95,5 +99,10 @@
 
   .paneSelector {
     display: block;
+  }
+
+  .hidden {
+    grid-area: hidden;
+    display: none;
   }
 }

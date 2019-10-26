@@ -1,5 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
+import useComponentSize from '@rehooks/component-size';
 import axios from 'axios';
+import cn from 'classnames';
 import Title from './components/Title';
 import Map from './components/Map';
 import Listing from './components/Listing';
@@ -23,15 +25,20 @@ const getListings = (mapBounds) => {
   });
 };
 
-const showArea = (areaName, selectedNavItem, isResponsive) => {
-  if (isResponsive) {
-    return selectedNavItem === areaName;
+const hideArea = (areaName, selectedNavItem, isSmallWindow) => {
+  if (isSmallWindow) {
+    return selectedNavItem !== areaName;
   }
-  return true;
+  return false;
 };
 
 function App() {
-  const isResponsive = window.matchMedia('only screen and (max-width: 992px)').matches;
+  const ref = useRef(null);
+  const {width, height} = useComponentSize(ref);
+  const [isSmallWindow, setIsSmallWindow] = useState(false);
+  useEffect(() => {
+    setIsSmallWindow(window.matchMedia('only screen and (max-width: 992px)').matches);
+  }, [width, height]);
   const [selectedNavItem, setSelectedNavItem] = useState('MAP');
   const [mapToken, setMapToken] = useState();
   const [defaultLocation, setDefaultLocation] = useState();
@@ -52,12 +59,15 @@ function App() {
   const selectedListing = listings.find(l => l.id === selectedListingId);
 
   return (
-    <div className={styles.container}>
+    <div ref={ref} className={styles.container}>
       <div className={styles.titleContainer}>
         <Title />
       </div>
       <div className={styles.contentContainer}>
-        {showArea('MAP', selectedNavItem, isResponsive) && <div className={styles.map}>
+        <div className={cn({
+          [styles.map]: true,
+          [styles.hidden]: hideArea('MAP', selectedNavItem, isSmallWindow),
+        })}>
           <Map
             token={mapToken}
             defaultLocation={defaultLocation}
@@ -80,8 +90,11 @@ function App() {
               setZoom(zoom);
             }}
           />
-        </div>}
-        {showArea('LISTING', selectedNavItem, isResponsive) && <div className={styles.listing}>
+        </div>
+        <div className={cn({
+          [styles.listing]: true,
+          [styles.hidden]: hideArea('LISTING', selectedNavItem, isSmallWindow),
+        })}>
           {selectedListing && <Listing
             displayPrice={selectedListing && selectedListing.displayPrice}
             url={selectedListing && selectedListing.url}
@@ -90,8 +103,11 @@ function App() {
           {!selectedListing && <div className={styles.noListing}>
             <div>Click on a listing to see details</div>
           </div>}
-        </div>}
-        {showArea('MAP', selectedNavItem, isResponsive) && <div className={styles.status}>
+        </div>
+        <div className={cn({
+          [styles.status]: true,
+          [styles.hidden]: hideArea('MAP', selectedNavItem, isSmallWindow),
+        })}>
           <Status
             numListings={listings.length}
             isListingLimitExceeded={isListingLimitExceeded}
@@ -107,10 +123,13 @@ function App() {
                 });
             }}
           />
-        </div>}
-        {showArea('LEGEND', selectedNavItem, isResponsive) && <div className={styles.legend}>
+        </div>
+        <div className={cn({
+          [styles.legend]: true,
+          [styles.hidden]: hideArea('LEGEND', selectedNavItem, isSmallWindow),
+        })}>
           <Legend />
-        </div>}
+        </div>
       </div>
       <div className={styles.paneSelector}>
         <Nav onNavigateTo={navItem => setSelectedNavItem(navItem)} showListing={Boolean(selectedListing)} />
