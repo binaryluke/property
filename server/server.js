@@ -1,7 +1,8 @@
 const express = require('express')
 const cors = require('cors')
 const axios = require('axios')
-const DOMAIN_REQUEST = require('./data/request.json');
+const geoip = require('geoip-lite')
+const DOMAIN_REQUEST = require('./data/request.json')
 
 if (!process.env.DOMAIN_API_KEY) {
   console.error('You must make your Domain API key available with the DOMAIN_API_KEY environment variable.');
@@ -62,9 +63,18 @@ app.get('/', (req, res) => {
   res.send('Luke Howard\'s Property API');
 });
 
-app.get('/tokens', (req, res) => res.json({
-  mapGL: process.env.MAPGL_ACCESS_TOKEN,
-}));
+app.get('/tokens', (req, res) => {
+  const ip = '110.140.145.202';
+  const { ll } = geoip.lookup(ip);
+  console.log(ll);
+  res.json({
+    mapGL: process.env.MAPGL_ACCESS_TOKEN,
+    ipLocation: {
+      latitude: ll[0],
+      longitude: ll[1],
+    },
+  });
+});
 
 app.get('/listings', (req, res) => {
   // Map bounds from client request

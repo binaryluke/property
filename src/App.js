@@ -34,6 +34,7 @@ function App() {
   const isResponsive = window.matchMedia('only screen and (max-width: 992px)').matches;
   const [selectedNavItem, setSelectedNavItem] = useState('MAP');
   const [mapToken, setMapToken] = useState();
+  const [defaultLocation, setDefaultLocation] = useState();
   const [listings, setListings] = useState([]);
   const [isListingLimitExceeded, setIsListingLimitExceeded] = useState(false);
   const [selectedListingId, setSelectedListingId] = useState();
@@ -42,8 +43,11 @@ function App() {
   const [zoom, setZoom] = useState(0);
 
   useEffect(() => {
-    axios.get('/property-api/tokens').then(({data}) => setMapToken(data.mapGL));
-  });
+    axios.get('/property-api/tokens').then(({data}) => {
+      setMapToken(data.mapGL);
+      setDefaultLocation(data.ipLocation);
+    });
+  }, []);
 
   const selectedListing = listings.find(l => l.id === selectedListingId);
 
@@ -56,6 +60,7 @@ function App() {
         {showArea('MAP', selectedNavItem, isResponsive) && <div className={styles.map}>
           <Map
             token={mapToken}
+            defaultLocation={defaultLocation}
             listings={listings}
             onChangeSelectedListing={setSelectedListingId}
             onMapMove={(center=[], nw=[], se=[], zoom) => {

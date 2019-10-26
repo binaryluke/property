@@ -1,8 +1,8 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import DeckGL from '@deck.gl/react';
 import {GridCellLayer} from '@deck.gl/layers';
 import {WebMercatorViewport} from '@deck.gl/core';
-import {InteractiveMap} from 'react-map-gl';
+import {StaticMap} from 'react-map-gl';
 import {
   PROPERTY_TYPE_HOUSE,
   PROPERTY_TYPE_TOWNHOUSE,
@@ -32,9 +32,7 @@ const getLayer = (listings, changeSelectedListing) => ({
 
 
 // Viewport settings - default to Melbourne
-const initialViewState = {
-  longitude: 144.96387836092487,
-  latitude: -37.815738101632384,
+let VIEW_STATE_DEFAULTS = {
   zoom: 13,
   pitch: 120,
   bearing: 0
@@ -54,18 +52,26 @@ const getMapMoveParams = viewState => {
   };
 }
 
-function Map({token, listings, onChangeSelectedListing, onMapMove}) {
-  useEffect(() => {
-    // Let parent component know the initial latitude/longitude of the map
-    const {center, nw, se} = getMapMoveParams(initialViewState);
-    onMapMove(center, nw, se, initialViewState.zoom);
-  }, []);
+function Map({token, defaultLocation, listings, onChangeSelectedListing, onMapMove}) {
+  const initialViewState = {
+    ...VIEW_STATE_DEFAULTS,
+    longitude: defaultLocation && defaultLocation.longitude,
+    latitude: defaultLocation && defaultLocation.latitude,
+  }
+
+  // useEffect(() => {
+  //   // Let parent component know the initial latitude/longitude of the map
+  //   if (token && defaultLocation) {
+  //     const {center, nw, se} = getMapMoveParams(initialViewState);
+  //     onMapMove(center, nw, se, initialViewState.zoom);
+  //   }
+  // }, [token, defaultLocation]);
+
+  if (!token || !defaultLocation) return null;
 
   const layers = [
     new GridCellLayer(getLayer(listings, onChangeSelectedListing))
   ];
-
-  if (!token) return null;
 
   return (
     <DeckGL
@@ -73,11 +79,12 @@ function Map({token, listings, onChangeSelectedListing, onMapMove}) {
       controller={true}
       layers={layers}
       onViewStateChange={({viewState}) => {
+        console.log('hi');
         const {center, nw, se, zoom} = getMapMoveParams(viewState);
         onMapMove(center, nw, se, viewState.zoom);
       }}
     >
-      <InteractiveMap
+      <StaticMap
         mapboxApiAccessToken={token}
         mapStyle="mapbox://styles/mapbox/dark-v9"
       />
