@@ -1,8 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 import DeckGL from '@deck.gl/react';
 import {GridCellLayer} from '@deck.gl/layers';
 import {WebMercatorViewport} from '@deck.gl/core';
-import {StaticMap} from 'react-map-gl';
+import {InteractiveMap} from 'react-map-gl';
+import useComponentSize from '@rehooks/component-size';
+import styles from './Map.module.css';
 import {
   PROPERTY_TYPE_HOUSE,
   PROPERTY_TYPE_TOWNHOUSE,
@@ -31,10 +33,10 @@ const getLayer = (listings, changeSelectedListing) => ({
 });
 
 
-// Viewport settings - default to Melbourne
+// Viewport settings
 let VIEW_STATE_DEFAULTS = {
   zoom: 13,
-  pitch: 120,
+  pitch: 50,
   bearing: 0
 };
 
@@ -53,42 +55,61 @@ const getMapMoveParams = viewState => {
 }
 
 function Map({token, defaultLocation, listings, onChangeSelectedListing, onMapMove}) {
-  const initialViewState = {
+  const ref = useRef(null);
+  const {width, height} = useComponentSize(ref);
+  const [viewState, setViewState] = useState({
     ...VIEW_STATE_DEFAULTS,
-    longitude: defaultLocation && defaultLocation.longitude,
-    latitude: defaultLocation && defaultLocation.latitude,
-  }
+  });
 
-  // useEffect(() => {
-  //   // Let parent component know the initial latitude/longitude of the map
-  //   if (token && defaultLocation) {
-  //     const {center, nw, se} = getMapMoveParams(initialViewState);
-  //     onMapMove(center, nw, se, initialViewState.zoom);
-  //   }
-  // }, [token, defaultLocation]);
+  // Update view state when default location changes
+  useEffect(() => {
+    if (!defaultLocation) return;
+    setViewState({
+      ...viewState,
+      longitude: defaultLocation && defaultLocation.longitude,
+      latitude: defaultLocation && defaultLocation.latitude,
+    });
+  }, [defaultLocation]);
 
-  if (!token || !defaultLocation) return null;
+  // Update view state when the map is resized
+  useEffect(() => {
+    setViewState({
+      ...viewState,
+      width,
+      height,
+    });
+  }, [width, height]);
+
+  // Delay rendering Deck GL & Mapbox until we have access keys and default location
+  if (!token || !defaultLocation) return <div className={styles.container} ref={ref} />;
 
   const layers = [
     new GridCellLayer(getLayer(listings, onChangeSelectedListing))
   ];
 
   return (
-    <DeckGL
-      initialViewState={initialViewState}
-      controller={true}
-      layers={layers}
-      onViewStateChange={({viewState}) => {
-        console.log('hi');
-        const {center, nw, se, zoom} = getMapMoveParams(viewState);
-        onMapMove(center, nw, se, viewState.zoom);
-      }}
-    >
-      <StaticMap
-        mapboxApiAccessToken={token}
-        mapStyle="mapbox://styles/mapbox/dark-v9"
-      />
-    </DeckGL>
+    <div ref={ref} className={styles.container}>
+      <DeckGL
+        viewState={viewState}
+        controller={true}
+        layers={layers}
+        onViewStateChange={({viewState}) => {
+          setViewState(viewState);
+          const {center, nw, se} = getMapMoveParams(viewState);
+          onMapMove(center, nw, se, viewState.zoom);
+        }}
+        onLoad={() => {
+          // Let parent component know the initial latitude/longitude of the map
+          const {center, nw, se} = getMapMoveParams(viewState);
+          onMapMove(center, nw, se, viewState.zoom);
+        }}
+      >
+        <InteractiveMap
+          mapboxApiAccessToken={token}
+          mapStyle="mapbox://styles/mapbox/dark-v9"
+        />
+      </DeckGL>
+    </div>
   );
 }
 
