@@ -75,12 +75,15 @@ function Map({token, defaultLocation, listings, onChangeSelectedListing, onMapMo
     });
 
     setIsReady(true);
+  // eslint-disable-next-line
   }, [isReady, token, defaultLocation, width, height]);
 
   // Update parent with location when view state changes
   useEffect(() => {
     const {center, nw, se} = getMapMoveParams(viewState);
+    // eslint-disable-next-line
     onMapMove(center, nw, se, viewState.zoom);
+  // eslint-disable-next-line
   }, [viewState]);
 
   // Delay rendering Deck GL & Mapbox until we have access keys and default location
