@@ -72,7 +72,10 @@ function App() {
             token={mapToken}
             defaultLocation={defaultLocation}
             listings={listings}
-            onChangeSelectedListing={setSelectedListingId}
+            onChangeSelectedListing={listingId => {
+              setSelectedListingId(listingId);
+              setSelectedNavItem('LISTING');
+            }}
             onMapMove={(center=[], nw=[], se=[], zoom) => {
               // Handle edge case where map sends us undefined prior to map initilisation
               if (center.length !== 2 || nw.length !== 2 || se.length !== 2) return;
